@@ -238,3 +238,76 @@ def cadastrar_produto(produtos):
         print(f"Erro durante cadastro: ")
         return False
 
+def listar_produtos(produtos, mostrar_tudo=True):
+    """Lista produtos no terminal. mostrar_tudo False exibe apenas resumo."""
+    print(f"\n--- Lista de Produtos ({len(produtos)} registros) ---")
+    if not produtos:
+        print(f"Nenhum produto cadastrado.")
+        return
+    for p in produtos:
+        if mostrar_tudo:
+            print(f"ID {p['id']} | Nome: {p['nome']} | Cat: {p.get('categoria','')}"
+                  f" | Tam: {p.get('tamanho','')} | Preço: R$ {float(p.get('preco',0.0)):.2f} | Qtd: {p.get('quantidade',0)}")
+            desc = p.get("descricao","")
+            if desc:
+                print(f"    Descrição: {desc}")
+        else:
+            print(f"ID {p['id']} - {p['nome']} - R$ {float(p.get('preco',0.0)):.2f} - Qtd: {p.get('quantidade',0)}")
+
+
+def encontrar_produto(produtos, id_busca):
+    """Retorna (produto, idx) ou (None, None)."""
+    for idx, p in enumerate(produtos):
+        if str(p.get("id")) == str(id_busca):
+            return p, idx
+    return None, None
+
+def editar_produto(produtos):
+    """Edita produto por ID."""
+    try:
+        id_busca = input("Informe o ID do produto para editar: ").strip()
+        p, idx = encontrar_produto(produtos, id_busca)
+        if p is None:
+            print(f"Produto com ID {id_busca} não encontrado.")
+            return False
+        print(f"Editando produto ID {id_busca} - {p['nome']}")
+        novo_nome = input(f"Nome [{p['nome']}]: ").strip() or p['nome']
+        nova_cat = input(f"Categoria [{p.get('categoria','')}]: ").strip() or p.get('categoria','')
+        novo_tam = input(f"Tamanho [{p.get('tamanho','')}]: ").strip() or p.get('tamanho','')
+
+
+        while True:
+            preco_input = input(f"Preço [{float(p.get('preco',0.0)):.2f}]: ").strip()
+            if preco_input == "":
+                novo_preco = float(p.get('preco',0.0))
+                break
+            try:
+                novo_preco = float(preco_input.replace(",",".")); break
+            except:
+                print(f"Preço inválido. Tente novamente.")
+        while True:
+            qtd_input = input(f"Quantidade [{p.get('quantidade',0)}]: ").strip()
+            if qtd_input == "":
+                nova_qtd = int(p.get('quantidade',0)); break
+            try:
+                nova_qtd = int(qtd_input); break
+            except:
+                print(f"Quantidade inválida. Tente novamente.")
+        nova_desc = input(f"Descrição [{p.get('descricao','')}]: ").strip() or p.get('descricao','')
+
+        produtos[idx].update({
+            "nome": novo_nome,
+            "categoria": nova_cat,
+            "tamanho": novo_tam,
+            "preco": novo_preco,
+            "quantidade": nova_qtd,
+            "descricao": nova_desc
+        })
+        salvar_produtos(produtos)
+        log_action(f"Edição de produto: id={id_busca}, nome='{novo_nome}'")
+        print(f"Produto atualizado com sucesso!")
+        return True
+    except Exception as e:
+        print(f"Erro ao editar produto: ")
+        return False
+
