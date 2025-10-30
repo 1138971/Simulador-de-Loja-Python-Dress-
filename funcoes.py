@@ -311,3 +311,23 @@ def editar_produto(produtos):
         print(f"Erro ao editar produto: ")
         return False
 
+def excluir_produto(produtos):
+    """Exclui produto por ID (com confirmação)."""
+    try:
+        id_busca = input("Informe o ID do produto para excluir: ").strip()
+        p, idx = encontrar_produto(produtos, id_busca)
+        if p is None:
+            print(f"Produto com ID {id_busca} não encontrado.")
+            return False
+        confirma = input(f"Confirma exclusão de '{p['nome']}' (ID {id_busca})? [s/N]: ").strip().lower()
+        if confirma != 's':
+            print(f"Exclusão cancelada.")
+            return False
+        produtos.pop(idx)
+        salvar_produtos(produtos)
+        log_action(f"Exclusão de produto: id={id_busca}, nome='{p['nome']}'")
+        print(f"Produto excluído com sucesso!")
+        return True
+    except Exception as e:
+        print(f"Erro ao excluir produto: ")
+        return False
