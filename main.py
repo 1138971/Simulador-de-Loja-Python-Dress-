@@ -18,3 +18,16 @@ def menu_principal():
     garantir_arquivos()
     produtos = carregar_produtos()
 
+    while True:
+        limpar_tela()
+        print("="*50)
+        print("             Loja de Roupa Python Dress")
+        print("="*50)
+        print("1) Cadastrar produto")
+        print("2) Listar produtos")
+        print("3) Editar produto")
+        print("4) Excluir produto")
+        print("5) Ver contador de registros / Contagem por categoria")
+        print("6) Ver log (últimas linhas)")
+        print("0) Sair")
+        print("-"*50)
